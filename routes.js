@@ -28,7 +28,7 @@ routes.get("/usuarios", usuarios_controller.index)
     .post("/usuarios", usuarios_controller.store)
     .post("/login", usuarios_controller.login)
 
-routes.get("/clientes", clientes_controller.index)
+routes.get("/clientes", login, clientes_controller.index)
     .post("/clientes", login, clientes_controller.store)
     .put("/clientes/:id", clientes_controller.update)
     .delete("/clientes/:id", clientes_controller.destroy)
