@@ -18,38 +18,32 @@ module.exports = {
     },
 
     async store(req, res) {
-        // a desestruturação do objeto req.body
+        
         const { dia, hora, preco, cliente_id, caes_cadastrados_id } = req.body;
 
         //validação para os campos
-        if (!dia || !hora || !preco ||!cliente_id || !caes_cadastrados_id) {
-            res.status(400).json({ erro: "Envie cadastro completo!" })
+        if (!dia || !hora || !preco || !cliente_id || !caes_cadastrados_id) {
+            res.status(400).json({ erro: "Enviar dia, hora, preco, cliente id, e cachorro id " });
+            return;
         }
 
+        //verificando horario 
+       
+        const cadastro = await knex("agendamento_banho_tosa").where({ hora, dia });
+              if(cadastro.find(e => e.hora == hora ) && cadastro.find(e => e.dia == dia)) {
+            res.status(400).json({ erro: "Erro. Horário ou dia indisponível" });
+            return
+        }
 
-        //verificando horario           //horario anterior ou durante o periodo de uma hora
-        try{
-            const horarios = await knex("agendamento_banho_tosa").where({hora});
-            if(horarios[0] < hora || horarios[0] + 1 < hora){
-                res.status(400).json({ erro: "Erro. Horário indisponível" });
-                return
-            }
-        }catch(error){
+        try {
+            const novo = await knex("agendamento_banho_tosa").insert({ dia, hora, preco, cliente_id, caes_cadastrados_id });
+            res.status(201).json(novo);
+        } catch (error) {
             res.status(400).json({ erro: error.message });
         }
-
-        
-        try {
-            const novo = await knex("agendamento_banho_tosa").insert({ dia, hora, preco, cliente_id, caes_cadastrados_id })
-            res.status(201).json({ id: novo[0] });
-        } catch (error) {
-            res.status(400).json({ error: messages })
-        }
-
-
     },
 
-    //alteração por id
+    
     async update(req, res) {
         const id = req.params.id
         const {dia, hora, preco, cliente_id, caes_cadastrados_id } = req.body;
@@ -63,7 +57,7 @@ module.exports = {
 
     },
 
-    //delete destroy
+    
     async destroy(req, res) {
         const id = req.params.id;
         try {
@@ -78,8 +72,7 @@ module.exports = {
     async show(req, res) {
         const {palavra} = req.params
         try {
-            const usuaios = await knex('usuarios').where('nome', 'like', `%${palavra}%`)
-
+            
             const agendamentos = await knex('agendamento_banho_tosa').where('dia', 'like', `%${palavra}%`)
                 .orWhere('hora', 'like', `%${palavra}%`)
                 .orWhere('preco', 'like', `%${palavra}%`)
@@ -90,9 +83,5 @@ module.exports = {
             res.status(400).json({ msg: error.message })
         }
     },
-
-
-
-     
 
 }
