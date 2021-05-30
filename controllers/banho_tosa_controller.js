@@ -14,7 +14,7 @@ module.exports = {
             .innerJoin("raca_cachorro as ra", "ra.id", "caes.raca_cachorro_id")
             .orderBy("a.id")
 
-        res.status(200).json(caes[0]);
+        res.status(200).json(caes);
     },
 
     async store(req, res) {
@@ -37,7 +37,7 @@ module.exports = {
 
         try {
             const novo = await knex("agendamento_banho_tosa").insert({ dia, hora, preco, cliente_id, caes_cadastrados_id });
-            res.status(201).json(novo);
+            res.status(201).json({id:novo[0]});
         } catch (error) {
             res.status(400).json({ erro: error.message });
         }
