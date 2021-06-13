@@ -1,6 +1,8 @@
 const express = require("express");
 const routes = express.Router()
+const cors = require("cors");
 
+routes.use(cors());
 
 const caes_cadastrados_controller = require('./controllers/caes_cadastrados_controller')
 const usuarios_controller = require('./controllers/usuarios_controller')
