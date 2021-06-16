@@ -84,7 +84,8 @@ module.exports = {
 
                 res.status(200).json({ msg: "Ok!Acesso Liberado", token, user:dados[0].nome })
             } else {
-                res.status(400).json({ erro: "Login ou senha incorretos" }); //senha invalida
+                //res.status(400).json()
+                res.status(200).json({ erro: "Login ou senha incorretos" }); //senha invalida
             }
         } catch (error) {
             res.status(400).json({ erro: error.message });
